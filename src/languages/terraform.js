@@ -24,10 +24,11 @@ function(hljs) {
       //key
       className: 'attribute',
       begin: /^\s*\w+/,
-      end: '=',
+      end: /(?![^=])/,
       excludeEnd: true
     },
     {
+      //value
       begin: '=\s*.',
       contains: PRIMITIVES.concat([  // values
         {
@@ -49,14 +50,15 @@ function(hljs) {
               contains: [{
                 className: 'symbol',
                 variants: [
-                  {begin: '\\b[a-zA-Z0-9_-]+\\('},
+                  //functions
+                  {begin: /\b[a-zA-Z0-9_-]+\(/},
                   {begin: '\\)'}
                   
                 ]
               }].concat(PRIMITIVES).concat([
                 hljs.QUOTE_STRING_MODE,
                 {
-                  //functions
+                  //references
                   className: 'type',
                   begin: /\w+(\.\w+)+/
                 }
@@ -69,20 +71,23 @@ function(hljs) {
   ];
 
   var BLOCK = {
-    begin: /^\s*\w+/,
-    end: '}',
-    className: 'keyword',
+    begin: /^\s*\w+(\s+"\w+")*\s*\{/, returnBegin: true,
+    end: '}', excludeEnd: true,
     contains: [
       hljs.QUOTE_STRING_MODE,  //block titles
       {
         begin: '{', end: '}',
         contains: BLOCK_BODY
+      },
+      {
+        begin: /\w+/, end: /\s/,
+        className: 'keyword'
       }
     ]
   }
   
   // Block bodies can contain other blocks
-  BLOCK_BODY.push(BLOCK);
+  BLOCK_BODY.splice(2, 0, BLOCK);
   
   return {
     contains: [
