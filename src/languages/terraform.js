@@ -60,7 +60,7 @@ function(hljs) {
                 {
                   //references
                   className: 'type',
-                  begin: /\w+(\.\w+)+/
+                  begin: /[a-zA-Z0-9_-]+(\.([a-zA-Z0-9_-]+|\*))+/
                 }
               ])
             }
